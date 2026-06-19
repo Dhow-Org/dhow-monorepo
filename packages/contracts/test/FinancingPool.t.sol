@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.24;
 
-import {Test} from "forge-std/Test.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { Test } from "forge-std/Test.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import {FinancingPool} from "../src/FinancingPool.sol";
-import {InvoiceRegistry} from "../src/InvoiceRegistry.sol";
-import {ReputationRegistry} from "../src/ReputationRegistry.sol";
-import {IInvoiceRegistry} from "../src/interfaces/IInvoiceRegistry.sol";
-import {IReputationRegistry} from "../src/interfaces/IReputationRegistry.sol";
-import {TestERC20} from "./mocks/TestERC20.sol";
+import { FinancingPool } from "../src/FinancingPool.sol";
+import { InvoiceRegistry } from "../src/InvoiceRegistry.sol";
+import { ReputationRegistry } from "../src/ReputationRegistry.sol";
+import { IInvoiceRegistry } from "../src/interfaces/IInvoiceRegistry.sol";
+import { IReputationRegistry } from "../src/interfaces/IReputationRegistry.sol";
+import { TestERC20 } from "./mocks/TestERC20.sol";
 
 contract FinancingPoolTest is Test {
     TestERC20 internal usdc;

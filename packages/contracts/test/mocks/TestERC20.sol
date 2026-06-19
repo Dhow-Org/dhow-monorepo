@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.24;
 
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 /// @notice TEST-ONLY ERC20 used to stand in for USDC in unit tests. NOT part of the product.
 ///         On real networks the canonical USDC address is supplied via configuration.

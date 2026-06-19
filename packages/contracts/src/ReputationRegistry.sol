@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.24;
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {IReputationRegistry} from "./interfaces/IReputationRegistry.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { IReputationRegistry } from "./interfaces/IReputationRegistry.sol";
 
 /// @title ReputationRegistry
 /// @notice Records SME financing/repayment/default events and maintains a 0-1000 cash-flow
@@ -48,7 +48,7 @@ contract ReputationRegistry is AccessControl, IReputationRegistry {
     constructor(address admin) {
         if (admin == address(0)) revert ZeroAddress();
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
-        params = ScoringParams({onTimeBonus: 20, latePenalty: 15, defaultPenalty: 100});
+        params = ScoringParams({ onTimeBonus: 20, latePenalty: 15, defaultPenalty: 100 });
     }
 
     /// @notice Update score deltas. Bounded by MAX_SCORE to prevent nonsensical config.
@@ -59,7 +59,9 @@ contract ReputationRegistry is AccessControl, IReputationRegistry {
         if (onTimeBonus > MAX_SCORE || latePenalty > MAX_SCORE || defaultPenalty > MAX_SCORE) {
             revert InvalidParams();
         }
-        params = ScoringParams({onTimeBonus: onTimeBonus, latePenalty: latePenalty, defaultPenalty: defaultPenalty});
+        params = ScoringParams({
+            onTimeBonus: onTimeBonus, latePenalty: latePenalty, defaultPenalty: defaultPenalty
+        });
         emit ScoringParamsUpdated(onTimeBonus, latePenalty, defaultPenalty);
     }
 

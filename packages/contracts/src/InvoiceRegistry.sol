@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.24;
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {IInvoiceRegistry} from "./interfaces/IInvoiceRegistry.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { IInvoiceRegistry } from "./interfaces/IInvoiceRegistry.sol";
 
 /// @title InvoiceRegistry
 /// @notice Registry of tokenized trade receivables with lifecycle management and

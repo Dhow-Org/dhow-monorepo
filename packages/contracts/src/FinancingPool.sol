@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.24;
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import {IInvoiceRegistry} from "./interfaces/IInvoiceRegistry.sol";
-import {IReputationRegistry} from "./interfaces/IReputationRegistry.sol";
+import { IInvoiceRegistry } from "./interfaces/IInvoiceRegistry.sol";
+import { IReputationRegistry } from "./interfaces/IReputationRegistry.sol";
 
 /// @title FinancingPool
 /// @notice Holds licensed-funder liquidity (USDC) and disburses receivable advances against
@@ -80,7 +80,9 @@ contract FinancingPool is AccessControl, ReentrancyGuard, Pausable {
         uint256 fee,
         uint64 dueDate
     );
-    event RepaymentReceived(uint256 indexed advanceId, address indexed payer, uint256 amount, uint256 totalRepaid);
+    event RepaymentReceived(
+        uint256 indexed advanceId, address indexed payer, uint256 amount, uint256 totalRepaid
+    );
     event AdvanceRepaid(uint256 indexed advanceId, address indexed sme, uint256 totalDue, bool onTime);
     event AdvanceDefaulted(uint256 indexed advanceId, address indexed sme, uint256 lossPrincipal);
 

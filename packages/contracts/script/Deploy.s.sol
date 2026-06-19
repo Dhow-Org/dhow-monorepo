@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.24;
 
-import {Script, console2} from "forge-std/Script.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { Script, console2 } from "forge-std/Script.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import {ReputationRegistry} from "../src/ReputationRegistry.sol";
-import {InvoiceRegistry} from "../src/InvoiceRegistry.sol";
-import {FinancingPool} from "../src/FinancingPool.sol";
-import {IInvoiceRegistry} from "../src/interfaces/IInvoiceRegistry.sol";
-import {IReputationRegistry} from "../src/interfaces/IReputationRegistry.sol";
+import { ReputationRegistry } from "../src/ReputationRegistry.sol";
+import { InvoiceRegistry } from "../src/InvoiceRegistry.sol";
+import { FinancingPool } from "../src/FinancingPool.sol";
+import { IInvoiceRegistry } from "../src/interfaces/IInvoiceRegistry.sol";
+import { IReputationRegistry } from "../src/interfaces/IReputationRegistry.sol";
 
 /// @notice Deploys the three contracts and wires inter-contract roles. All addresses come from env.
 contract Deploy is Script {
@@ -24,7 +24,11 @@ contract Deploy is Script {
         ReputationRegistry reputation = new ReputationRegistry(admin);
         InvoiceRegistry registry = new InvoiceRegistry(admin);
         FinancingPool pool = new FinancingPool(
-            admin, operator, IERC20(usdc), IInvoiceRegistry(address(registry)), IReputationRegistry(address(reputation))
+            admin,
+            operator,
+            IERC20(usdc),
+            IInvoiceRegistry(address(registry)),
+            IReputationRegistry(address(reputation))
         );
 
         // Inter-contract wiring: the pool drives invoice + reputation state transitions.

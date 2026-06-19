@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.24;
 
-import {Test} from "forge-std/Test.sol";
-import {InvoiceRegistry} from "../src/InvoiceRegistry.sol";
-import {IInvoiceRegistry} from "../src/interfaces/IInvoiceRegistry.sol";
+import { Test } from "forge-std/Test.sol";
+import { InvoiceRegistry } from "../src/InvoiceRegistry.sol";
+import { IInvoiceRegistry } from "../src/interfaces/IInvoiceRegistry.sol";
 
 contract InvoiceRegistryTest is Test {
     InvoiceRegistry internal reg;
@@ -79,7 +79,9 @@ contract InvoiceRegistryTest is Test {
         uint256 id = _register("ref1");
         vm.prank(financer);
         vm.expectRevert(
-            abi.encodeWithSelector(InvoiceRegistry.InvalidStatus.selector, id, IInvoiceRegistry.Status.Registered)
+            abi.encodeWithSelector(
+                InvoiceRegistry.InvalidStatus.selector, id, IInvoiceRegistry.Status.Registered
+            )
         );
         reg.markFinanced(id);
     }
