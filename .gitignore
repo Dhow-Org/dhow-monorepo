@@ -1,0 +1,46 @@
+# ---- dependencies ----
+node_modules/
+.pnpm-store/
+
+# ---- build output ----
+dist/
+build/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+.turbo/
+
+# ---- foundry ----
+packages/contracts/out/
+packages/contracts/cache/
+packages/contracts/lib/
+packages/contracts/broadcast/
+
+# ---- env & secrets (NEVER commit) ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# ---- editor / os ----
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# ---- internal strategy docs (keep private; repo is code-only) ----
+AION-Aptos-Assembly-GTM-Strategy-FILLED.md
+AION-C4-Architecture.md
+AION-Demo-Day-Memo-FILLED.md
+AION-Golden-Path.md
+AION_One_Pager.md
+Technical-Architecture.md
+MASTER-PROJECT-DOCUMENT.md
+.claude/
+BUILD-PLAN.md
+
+# code-review tooling artifacts
+.code-review-graph/

@@ -1,0 +1,14 @@
+{
+  "name": "@dhow/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "description": "dhow on-chain registries + financing pool (Foundry/Solidity, Polygon).",
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "forge build",
+    "test": "forge test -vv",
+    "fmt": "forge fmt",
+    "coverage": "forge coverage",
+    "deploy:amoy": "forge script script/Deploy.s.sol:Deploy --rpc-url amoy --broadcast --verify"
+  }
+}

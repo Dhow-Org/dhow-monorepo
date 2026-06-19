@@ -1,0 +1,24 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+test = "test"
+script = "script"
+solc_version = "0.8.24"
+optimizer = true
+optimizer_runs = 200
+via_ir = false
+fs_permissions = [{ access = "read", path = "./" }]
+gas_reports = ["InvoiceRegistry", "FinancingPool", "ReputationRegistry"]
+
+[fmt]
+line_length = 110
+tab_width = 4
+bracket_spacing = true
+int_types = "long"
+
+[rpc_endpoints]
+amoy = "${RPC_URL}"
+
+[etherscan]
+amoy = { key = "${ETHERSCAN_API_KEY}", chain = 80002 }

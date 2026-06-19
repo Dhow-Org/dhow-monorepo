@@ -1,0 +1,22 @@
+{
+  "name": "dhow-platform",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Stablecoin cross-border payments + cash-flow credit for UAE import/export SMEs, on Polygon (codename dhow).",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@10.18.2",
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "contracts:build": "pnpm --filter @dhow/contracts build",
+    "contracts:test": "pnpm --filter @dhow/contracts test"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.5"
+  }
+}
