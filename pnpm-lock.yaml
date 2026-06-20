@@ -79,6 +79,15 @@ importers:
         specifier: ^5.6.3
         version: 5.9.3
 
+  packages/underwriting:
+    devDependencies:
+      tsx:
+        specifier: ^4.19.1
+        version: 4.22.4
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+
 packages:
 
   '@adraffy/ens-normalize@1.11.1':

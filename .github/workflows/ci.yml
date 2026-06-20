@@ -61,6 +61,11 @@ jobs:
       - name: Build shared
         run: pnpm --filter @dhow/shared build
 
+      - name: Build + test underwriting
+        run: |
+          pnpm --filter @dhow/underwriting build
+          pnpm --filter @dhow/underwriting test
+
       - name: Prisma generate
         run: pnpm --filter @dhow/api exec prisma generate
         env:
