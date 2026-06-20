@@ -1,0 +1,131 @@
+// dhow data model. The off-chain record that mirrors + enriches on-chain state.
+// Sensitive data (KYB, invoice docs) lives here, never on-chain.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum InvoiceStatus {
+  REGISTERED
+  VERIFIED
+  FINANCED
+  REPAID
+  DEFAULTED
+  CANCELLED
+}
+
+enum AdvanceStatus {
+  ACTIVE
+  REPAID
+  DEFAULTED
+}
+
+enum KybStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Sme {
+  id           String               @id @default(cuid())
+  wallet       String               @unique
+  legalName    String?
+  tradeLicense String?
+  kybStatus    KybStatus            @default(PENDING)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  invoices     Invoice[]
+  advances     Advance[]
+  reputation   ReputationSnapshot[]
+  kyb          KybRecord?
+}
+
+model Funder {
+  id        String   @id @default(cuid())
+  wallet    String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+}
+
+model Invoice {
+  id          String        @id @default(cuid())
+  onChainId   Int?          @unique
+  sme         Sme           @relation(fields: [smeId], references: [id])
+  smeId       String
+  debtor      String?
+  asset       String
+  amount      String // token base units (stringified integer)
+  dueDate     DateTime
+  status      InvoiceStatus @default(REGISTERED)
+  externalRef String        @unique
+  docHash     String
+  registerTx  String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  advance     Advance?
+
+  @@index([smeId])
+  @@index([status])
+}
+
+model Advance {
+  id          String        @id @default(cuid())
+  onChainId   Int?          @unique
+  invoice     Invoice       @relation(fields: [invoiceId], references: [id])
+  invoiceId   String        @unique
+  sme         Sme           @relation(fields: [smeId], references: [id])
+  smeId       String
+  principal   String
+  feeAmount   String
+  dueDate     DateTime
+  repaid      String        @default("0")
+  status      AdvanceStatus @default(ACTIVE)
+  disburseTx  String?
+  disbursedAt DateTime?
+  repayments  Repayment[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([smeId])
+  @@index([status])
+}
+
+model Repayment {
+  id        String   @id @default(cuid())
+  advance   Advance  @relation(fields: [advanceId], references: [id])
+  advanceId String
+  amount    String
+  payer     String
+  txHash    String?
+  createdAt DateTime @default(now())
+
+  @@index([advanceId])
+}
+
+model ReputationSnapshot {
+  id        String   @id @default(cuid())
+  sme       Sme      @relation(fields: [smeId], references: [id])
+  smeId     String
+  score     Int
+  tier      Int
+  createdAt DateTime @default(now())
+
+  @@index([smeId])
+}
+
+model KybRecord {
+  id        String    @id @default(cuid())
+  sme       Sme       @relation(fields: [smeId], references: [id])
+  smeId     String    @unique
+  status    KybStatus @default(PENDING)
+  provider  String?
+  reference String?
+  data      Json?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}

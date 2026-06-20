@@ -1,0 +1,33 @@
+# Local dev infrastructure for the dhow backend.
+#   postgres : the off-chain record
+#   anvil    : a local Polygon-like EVM for the chain client + e2e
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: dhow-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dhow
+      POSTGRES_PASSWORD: dhow
+      POSTGRES_DB: dhow
+    ports:
+      - "5432:5432"
+    volumes:
+      - dhow_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dhow"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  anvil:
+    image: ghcr.io/foundry-rs/foundry:latest
+    container_name: dhow-anvil
+    restart: unless-stopped
+    # Deterministic mnemonic so dev accounts are stable across restarts.
+    entrypoint: ["anvil", "--host", "0.0.0.0", "--chain-id", "31337"]
+    ports:
+      - "8545:8545"
+
+volumes:
+  dhow_pg:
