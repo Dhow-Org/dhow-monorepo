@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.24;
 
-import {Script, console2} from "forge-std/Script.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { Script, console2 } from "forge-std/Script.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import {ReputationRegistry} from "../src/ReputationRegistry.sol";
-import {InvoiceRegistry} from "../src/InvoiceRegistry.sol";
-import {FinancingPool} from "../src/FinancingPool.sol";
-import {IInvoiceRegistry} from "../src/interfaces/IInvoiceRegistry.sol";
-import {IReputationRegistry} from "../src/interfaces/IReputationRegistry.sol";
-import {TestERC20} from "../test/mocks/TestERC20.sol";
+import { ReputationRegistry } from "../src/ReputationRegistry.sol";
+import { InvoiceRegistry } from "../src/InvoiceRegistry.sol";
+import { FinancingPool } from "../src/FinancingPool.sol";
+import { IInvoiceRegistry } from "../src/interfaces/IInvoiceRegistry.sol";
+import { IReputationRegistry } from "../src/interfaces/IReputationRegistry.sol";
+import { TestERC20 } from "../test/mocks/TestERC20.sol";
 
 /// @notice LOCAL-ONLY deploy for the Anvil e2e: deploys a test USDC + the three
 ///         contracts, wires roles, and seeds pool liquidity. Not for real networks.
