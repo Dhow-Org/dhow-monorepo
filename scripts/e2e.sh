@@ -19,8 +19,10 @@ until cast block-number --rpc-url "$RPC" >/dev/null 2>&1; do :; done
 PK0="$(grep -oE '\(0\) 0x[0-9a-fA-F]{64}' "$ANVIL_LOG" | head -1 | grep -oE '0x[0-9a-fA-F]{64}')"
 [ -n "$PK0" ] || { echo "could not read Anvil deployer key"; cat "$ANVIL_LOG"; exit 1; }
 
-OUT="$(DEPLOYER_PRIVATE_KEY="$PK0" forge script script/DeployLocal.s.sol:DeployLocal \
-  --rpc-url "$RPC" --broadcast --root packages/contracts 2>&1)"
+# Run from the Foundry project dir so the script path resolves (--root does not
+# relocate the script-path argument).
+OUT="$(cd packages/contracts && DEPLOYER_PRIVATE_KEY="$PK0" \
+  forge script script/DeployLocal.s.sol:DeployLocal --rpc-url "$RPC" --broadcast 2>&1)"
 
 pick() { echo "$OUT" | grep -oE "$1= 0x[0-9a-fA-F]{40}" | grep -oE '0x[0-9a-fA-F]{40}' | head -1; }
 USDC="$(pick USDC_ADDRESS)"
