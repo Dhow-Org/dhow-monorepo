@@ -180,4 +180,85 @@ export class ChainService {
     })) as bigint;
     return Number(score);
   }
+
+  async getReputation(
+    sme: Address,
+  ): Promise<{ score: number; financedCount: number; onTimeCount: number; lateCount: number; defaultCount: number }> {
+    const r = (await this.publicClient.readContract({
+      address: this.addresses.reputationRegistry,
+      abi: ReputationRegistryAbi,
+      functionName: "getReputation",
+      args: [sme],
+    })) as unknown as {
+      score: bigint;
+      financedCount: bigint;
+      onTimeCount: bigint;
+      lateCount: bigint;
+      defaultCount: bigint;
+    };
+    return {
+      score: Number(r.score),
+      financedCount: Number(r.financedCount),
+      onTimeCount: Number(r.onTimeCount),
+      lateCount: Number(r.lateCount),
+      defaultCount: Number(r.defaultCount),
+    };
+  }
+
+  // ------------------------------ Pool reads ----------------------------------
+
+  async getFunder(funder: Address): Promise<{ principal: string; claimable: string; pendingFees: string }> {
+    const f = (await this.publicClient.readContract({
+      address: this.addresses.financingPool,
+      abi: FinancingPoolAbi,
+      functionName: "funderOf",
+      args: [funder],
+    })) as unknown as { principal: bigint; claimable: bigint };
+    const pending = (await this.publicClient.readContract({
+      address: this.addresses.financingPool,
+      abi: FinancingPoolAbi,
+      functionName: "pendingFees",
+      args: [funder],
+    })) as bigint;
+    return { principal: f.principal.toString(), claimable: f.claimable.toString(), pendingFees: pending.toString() };
+  }
+
+  async getPoolStats(): Promise<{
+    idleLiquidity: string;
+    outstandingPrincipal: string;
+    totalFunderPrincipal: string;
+    totalLosses: string;
+  }> {
+    const read = (functionName: "idleLiquidity" | "outstandingPrincipal" | "totalFunderPrincipal" | "totalLosses") =>
+      this.publicClient.readContract({ address: this.addresses.financingPool, abi: FinancingPoolAbi, functionName });
+    const [idle, outstanding, total, losses] = (await Promise.all([
+      read("idleLiquidity"),
+      read("outstandingPrincipal"),
+      read("totalFunderPrincipal"),
+      read("totalLosses"),
+    ])) as bigint[];
+    return {
+      idleLiquidity: idle.toString(),
+      outstandingPrincipal: outstanding.toString(),
+      totalFunderPrincipal: total.toString(),
+      totalLosses: losses.toString(),
+    };
+  }
+
+  async getAdvanceOnChain(
+    advanceOnChainId: number,
+  ): Promise<{ principal: string; feeAmount: string; repaid: string; status: number }> {
+    const a = (await this.publicClient.readContract({
+      address: this.addresses.financingPool,
+      abi: FinancingPoolAbi,
+      functionName: "getAdvance",
+      args: [BigInt(advanceOnChainId)],
+    })) as unknown as { principal: bigint; feeAmount: bigint; repaid: bigint; status: number };
+    return {
+      principal: a.principal.toString(),
+      feeAmount: a.feeAmount.toString(),
+      repaid: a.repaid.toString(),
+      status: Number(a.status),
+    };
+  }
 }

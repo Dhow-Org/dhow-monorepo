@@ -129,3 +129,14 @@ model KybRecord {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
+
+// Single-use SIWE login nonces.
+model Nonce {
+  id         String    @id @default(cuid())
+  value      String    @unique
+  consumedAt DateTime?
+  expiresAt  DateTime
+  createdAt  DateTime  @default(now())
+
+  @@index([expiresAt])
+}

@@ -14,9 +14,9 @@ export class InvoicesService {
   /** Persist the receivable, then register it on-chain (externalRef hashed for anti-double-financing). */
   async create(input: RegisterInvoiceInput) {
     const sme = await this.prisma.sme.upsert({
-      where: { wallet: input.supplier },
+      where: { wallet: input.supplier.toLowerCase() },
       update: {},
-      create: { wallet: input.supplier },
+      create: { wallet: input.supplier.toLowerCase() },
     });
 
     const externalRefHash = keccak256(toHex(input.externalRef));

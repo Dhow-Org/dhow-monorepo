@@ -56,8 +56,20 @@ async function main(): Promise<void> {
   const scoreAfter = await chain.getScore(SUPPLIER);
   assert.equal(scoreAfter, scoreBefore + 20, "on-time repayment should add 20 to the score");
 
+  // 6) the new read paths (reputation detail, pool stats, funder fees)
+  const rep = await chain.getReputation(SUPPLIER);
+  assert.equal(rep.financedCount, 1, "financedCount should be 1");
+  assert.equal(rep.onTimeCount, 1, "onTimeCount should be 1");
+
+  const pool = await chain.getPoolStats();
+  assert.equal(pool.outstandingPrincipal, "0", "no outstanding principal after full repayment");
+
+  const funder = await chain.getFunder(chain.operator.address);
+  assert.equal(funder.pendingFees, "170000000", "funder should have accrued the 170 USDC fee");
+
   console.log(
-    `E2E OK  invoice=${invoiceId} advance=${advanceId} score ${scoreBefore} -> ${scoreAfter}`,
+    `E2E OK  invoice=${invoiceId} advance=${advanceId} score ${scoreBefore} -> ${scoreAfter}; ` +
+      `fee accrued=${funder.pendingFees}`,
   );
 }
 

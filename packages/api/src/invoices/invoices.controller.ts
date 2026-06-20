@@ -1,10 +1,14 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { registerInvoiceSchema, type RegisterInvoiceInput } from "@dhow/shared";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
+import { JwtAuthGuard } from "../auth/jwt-auth.guard";
+import { OpsGuard } from "../auth/ops.guard";
 import { InvoicesService } from "./invoices.service";
 
 @ApiTags("invoices")
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller("invoices")
 export class InvoicesController {
   constructor(private readonly invoices: InvoicesService) {}
@@ -28,7 +32,8 @@ export class InvoicesController {
   }
 
   @Post(":id/verify")
-  @ApiOperation({ summary: "Verify an invoice so it becomes financeable" })
+  @UseGuards(OpsGuard)
+  @ApiOperation({ summary: "Verify an invoice so it becomes financeable (ops only)" })
   verify(@Param("id") id: string) {
     return this.invoices.verify(id);
   }

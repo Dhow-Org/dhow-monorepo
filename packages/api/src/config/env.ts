@@ -14,6 +14,15 @@ export const envSchema = z.object({
   REPUTATION_REGISTRY_ADDRESS: hexAddress,
   USDC_ADDRESS: hexAddress,
   JWT_SECRET: z.string().min(16),
+  JWT_EXPIRES_IN: z.string().default("1d"),
+  /** Comma-separated wallet addresses allowed to call operator/ops endpoints. */
+  OPS_ADDRESSES: z.string().default(""),
+  /** Set to "false" to disable the background reconciliation poller. */
+  INDEXER_ENABLED: z
+    .string()
+    .default("true")
+    .transform((v) => v !== "false"),
+  INDEXER_INTERVAL_MS: z.coerce.number().int().positive().default(15_000),
 });
 
 export type Env = z.infer<typeof envSchema>;
