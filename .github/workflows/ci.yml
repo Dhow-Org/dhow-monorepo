@@ -31,3 +31,47 @@ jobs:
 
       - name: Test
         run: forge test -vvv
+
+  backend:
+    name: Backend (typecheck + chain e2e)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared
+        run: pnpm --filter @dhow/shared build
+
+      - name: Prisma generate
+        run: pnpm --filter @dhow/api exec prisma generate
+        env:
+          DATABASE_URL: postgresql://unused
+
+      - name: Typecheck api (incl. e2e)
+        run: pnpm --filter @dhow/api exec tsc --noEmit -p tsconfig.spec.json
+        env:
+          DATABASE_URL: postgresql://unused
+
+      - name: Chain e2e (Anvil)
+        run: bash scripts/e2e.sh
