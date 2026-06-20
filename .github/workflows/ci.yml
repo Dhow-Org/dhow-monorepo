@@ -66,6 +66,9 @@ jobs:
           pnpm --filter @dhow/underwriting build
           pnpm --filter @dhow/underwriting test
 
+      - name: Build web
+        run: pnpm --filter @dhow/web build
+
       - name: Prisma generate
         run: pnpm --filter @dhow/api exec prisma generate
         env:

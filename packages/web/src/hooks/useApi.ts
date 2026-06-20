@@ -1,0 +1,69 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { api } from "../lib/api";
+import type { Decision, DisburseResult, InvoiceRow, PoolStats, ReputationView } from "../lib/types";
+
+export function useInvoices(enabled: boolean) {
+  return useQuery({
+    queryKey: ["invoices"],
+    queryFn: () => api<InvoiceRow[]>("/invoices"),
+    enabled,
+  });
+}
+
+export function usePool() {
+  return useQuery({ queryKey: ["pool"], queryFn: () => api<PoolStats>("/pool") });
+}
+
+export function useReputation(wallet: string | undefined) {
+  return useQuery({
+    queryKey: ["reputation", wallet],
+    queryFn: () => api<ReputationView>(`/reputation/${wallet}`),
+    enabled: Boolean(wallet),
+  });
+}
+
+export function useAssess() {
+  return useMutation({
+    mutationFn: (vars: { invoiceId: string; requestedAdvancePct?: number }) =>
+      api<Decision>(`/invoices/${vars.invoiceId}/assess`, {
+        method: "POST",
+        body: { requestedAdvancePct: vars.requestedAdvancePct },
+      }),
+  });
+}
+
+export function useCreateInvoice() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: {
+      supplier: string;
+      debtor?: string;
+      asset: string;
+      amount: string;
+      dueDate: number;
+      externalRef: string;
+      docHash: string;
+    }) => api<InvoiceRow>("/invoices", { method: "POST", body }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["invoices"] }),
+  });
+}
+
+export function useVerifyInvoice() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api<InvoiceRow>(`/invoices/${id}/verify`, { method: "POST" }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["invoices"] }),
+  });
+}
+
+export function useDisburse() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: { invoiceId: string; requestedAdvancePct?: number }) =>
+      api<DisburseResult>(`/invoices/${vars.invoiceId}/disburse`, {
+        method: "POST",
+        body: { requestedAdvancePct: vars.requestedAdvancePct },
+      }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["invoices"] }),
+  });
+}
