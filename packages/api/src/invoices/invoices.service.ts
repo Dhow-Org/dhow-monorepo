@@ -52,6 +52,9 @@ export class InvoicesService {
     if (invoice.onChainId == null) throw new BadRequestException("invoice is not on-chain");
     if (invoice.status !== "REGISTERED") throw new BadRequestException(`cannot verify invoice in status ${invoice.status}`);
     await this.chain.verifyInvoice(invoice.onChainId);
+    // v1 simplification: ops verifying the invoice also clears the SME's KYB gate.
+    // Real flow: KYB is a separate licensed-partner step.
+    await this.prisma.sme.update({ where: { id: invoice.smeId }, data: { kybStatus: "APPROVED" } });
     return this.prisma.invoice.update({ where: { id }, data: { status: "VERIFIED" } });
   }
 

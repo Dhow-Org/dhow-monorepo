@@ -13,9 +13,16 @@ import { disburseBodySchema, repayBodySchema, type DisburseBody, type RepayBody 
 export class FinancingController {
   constructor(private readonly financing: FinancingService) {}
 
+  @Post("invoices/:id/assess")
+  @UseGuards(OpsGuard)
+  @ApiOperation({ summary: "Preview the underwriting decision for an invoice without disbursing (ops only)" })
+  assess(@Param("id") id: string, @Body(new ZodValidationPipe(disburseBodySchema)) body: DisburseBody) {
+    return this.financing.assess(id, body.requestedAdvancePct);
+  }
+
   @Post("invoices/:id/disburse")
   @UseGuards(OpsGuard)
-  @ApiOperation({ summary: "Disburse a receivable advance against a verified invoice (ops only)" })
+  @ApiOperation({ summary: "Underwrite + disburse the engine-decided advance (ops only)" })
   disburse(@Param("id") id: string, @Body(new ZodValidationPipe(disburseBodySchema)) body: DisburseBody) {
     return this.financing.disburse(id, body);
   }

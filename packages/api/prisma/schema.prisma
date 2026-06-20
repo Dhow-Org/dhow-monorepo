@@ -68,6 +68,7 @@ model Invoice {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   advance     Advance?
+  decisions   UnderwritingDecision[]
 
   @@index([smeId])
   @@index([status])
@@ -88,6 +89,7 @@ model Advance {
   disburseTx  String?
   disbursedAt DateTime?
   repayments  Repayment[]
+  decision    UnderwritingDecision?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
@@ -139,4 +141,25 @@ model Nonce {
   createdAt  DateTime  @default(now())
 
   @@index([expiresAt])
+}
+
+// Auditable record of every underwriting decision (approved or declined).
+model UnderwritingDecision {
+  id            String   @id @default(cuid())
+  invoice       Invoice  @relation(fields: [invoiceId], references: [id])
+  invoiceId     String
+  advance       Advance? @relation(fields: [advanceId], references: [id])
+  advanceId     String?  @unique
+  approved      Boolean
+  grade         String
+  pd            Float
+  advancePct    Float
+  feeBps        Int
+  reasonCodes   Json
+  trace         Json
+  modelVersion  String
+  policyVersion String
+  createdAt     DateTime @default(now())
+
+  @@index([invoiceId])
 }

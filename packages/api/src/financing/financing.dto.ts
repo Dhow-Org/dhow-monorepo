@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { tokenAmountSchema, MAX_FEE_BPS } from "@dhow/shared";
+import { tokenAmountSchema } from "@dhow/shared";
 
+/** The engine decides advance % and fee; the SME may optionally request a lower advance %. */
 export const disburseBodySchema = z.object({
-  advanceAmount: tokenAmountSchema,
-  feeBps: z.number().int().min(0).max(MAX_FEE_BPS),
+  requestedAdvancePct: z.number().min(0).max(0.95).optional(),
 });
 export type DisburseBody = z.infer<typeof disburseBodySchema>;
 
