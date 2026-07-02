@@ -37,6 +37,7 @@ model Sme {
   legalName    String?
   tradeLicense String?
   kybStatus    KybStatus            @default(PENDING)
+  leanEntityId String?
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @updatedAt
   invoices     Invoice[]

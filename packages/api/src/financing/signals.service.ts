@@ -4,6 +4,7 @@ import type { Address } from "viem";
 import type { UnderwritingSignals } from "@dhow/underwriting";
 import { PrismaService } from "../prisma/prisma.service";
 import { ChainService } from "../chain/chain.service";
+import { OpenFinanceService } from "../open-finance/open-finance.service";
 
 const USDC_DECIMALS = 6;
 const toHuman = (base: string): number => Number(BigInt(base)) / 10 ** USDC_DECIMALS;
@@ -19,6 +20,7 @@ export class SignalsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly chain: ChainService,
+    private readonly openFinance: OpenFinanceService,
   ) {}
 
   async buildForInvoice(invoice: Invoice & { sme: Sme }, requestedAdvancePct?: number): Promise<UnderwritingSignals> {
@@ -38,12 +40,15 @@ export class SignalsService {
     const existingExposure = active.reduce((sum, a) => sum + toHuman(a.principal), 0);
     const tenorDays = Math.max(1, Math.round((invoice.dueDate.getTime() - Date.now()) / 86_400_000));
 
+    // Real cash-flow signals from the SME's linked bank (Lean); null until linked.
+    const cashflow = await this.openFinance.getSignals(invoice.sme.leanEntityId);
+
     return {
       kybApproved: invoice.sme.kybStatus === "APPROVED",
       seller: {
         onChainScore,
         onTimeRepayments,
-        // revenue / consistency / inflow-outflow / monthsTrading arrive with Open Finance (Phase 4)
+        ...(cashflow ?? {}),
       },
       buyer: {
         priorOnTimePayments: buyerPriorOnTime,

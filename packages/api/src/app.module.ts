@@ -9,6 +9,7 @@ import { FinancingModule } from "./financing/financing.module";
 import { FundersModule } from "./funders/funders.module";
 import { ReputationModule } from "./reputation/reputation.module";
 import { IndexerModule } from "./indexer/indexer.module";
+import { OpenFinanceModule } from "./open-finance/open-finance.module";
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { IndexerModule } from "./indexer/indexer.module";
     FundersModule,
     ReputationModule,
     IndexerModule,
+    OpenFinanceModule,
   ],
 })
 export class AppModule {}

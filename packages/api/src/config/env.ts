@@ -23,6 +23,9 @@ export const envSchema = z.object({
     .default("true")
     .transform((v) => v !== "false"),
   INDEXER_INTERVAL_MS: z.coerce.number().int().positive().default(15_000),
+  // Open finance (Lean). Empty token => the engine falls back to conservative bins.
+  LEAN_APP_TOKEN: z.string().default(""),
+  LEAN_BASE_URL: z.string().default("https://sandbox.leantech.me"),
 });
 
 export type Env = z.infer<typeof envSchema>;
