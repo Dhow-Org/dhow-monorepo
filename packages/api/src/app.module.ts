@@ -10,6 +10,7 @@ import { FundersModule } from "./funders/funders.module";
 import { ReputationModule } from "./reputation/reputation.module";
 import { IndexerModule } from "./indexer/indexer.module";
 import { OpenFinanceModule } from "./open-finance/open-finance.module";
+import { OffRampModule } from "./off-ramp/off-ramp.module";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { OpenFinanceModule } from "./open-finance/open-finance.module";
     ReputationModule,
     IndexerModule,
     OpenFinanceModule,
+    OffRampModule,
   ],
 })
 export class AppModule {}

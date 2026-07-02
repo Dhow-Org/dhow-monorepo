@@ -13,7 +13,7 @@
     "prisma:validate": "prisma validate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
-    "test": "tsx test/cashflow.test.ts"
+    "test": "tsx test/cashflow.test.ts && tsx test/offramp.test.ts"
   },
   "dependencies": {
     "@dhow/shared": "workspace:*",

@@ -26,6 +26,11 @@ export const envSchema = z.object({
   // Open finance (Lean). Empty token => the engine falls back to conservative bins.
   LEAN_APP_TOKEN: z.string().default(""),
   LEAN_BASE_URL: z.string().default("https://sandbox.leantech.me"),
+  // Off-ramp (USDC -> AED via a licensed partner, e.g. Fuze). AED is USD-pegged.
+  AED_RATE: z.coerce.number().positive().default(3.6725),
+  OFFRAMP_FEE_BPS: z.coerce.number().int().min(0).max(1000).default(40),
+  OFFRAMP_API_URL: z.string().default(""),
+  OFFRAMP_API_KEY: z.string().default(""),
 });
 
 export type Env = z.infer<typeof envSchema>;
