@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Sail } from "../ui/Sail";
+import { Logo } from "../ui/Logo";
 import { Spinner } from "../ui/Spinner";
 import type { Session } from "../hooks/useSession";
 
@@ -20,7 +20,7 @@ export function LandingNav({ session }: { session: Session }) {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
         <div className="flex items-center gap-2.5">
           <span className="text-brass">
-            <Sail size={24} />
+            <Logo size={26} />
           </span>
           <span className="font-display text-xl tracking-tight">dhow</span>
         </div>

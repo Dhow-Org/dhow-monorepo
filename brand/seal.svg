@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Dhow "Seal" mark — mono, uses currentColor. Set color via CSS `color`. -->
+  <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="24" cy="24" r="16.5" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 4.5" opacity="0.55"/>
+  <path d="M24 13 V31" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.35"/>
+  <path d="M24 15 L33 31 L24 31 Z" fill="currentColor"/>
+  <path d="M24 18 L17 31 L24 31 Z" fill="currentColor" opacity="0.5"/>
+  <path d="M15 32.5 Q24 36.5 33 32.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+</svg>

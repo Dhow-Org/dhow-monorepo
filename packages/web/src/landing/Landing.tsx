@@ -1,6 +1,6 @@
 import { Anchor, ArrowRight, ChartLineUp, Compass, ShieldCheck, Waves } from "@phosphor-icons/react";
 import type { Session } from "../hooks/useSession";
-import { Sail } from "../ui/Sail";
+import { Logo } from "../ui/Logo";
 import { GradeStamp } from "../ui/GradeStamp";
 import { Spinner } from "../ui/Spinner";
 import { OceanCanvas } from "./OceanCanvas";
@@ -24,7 +24,7 @@ export function Landing({ session }: { session: Session }) {
         <div className="relative mx-auto w-full max-w-6xl px-5">
           <Reveal>
             <div className="eyebrow flex items-center gap-2">
-              <Sail size={16} /> Trade finance · on Polygon · from DIFC
+              <Logo size={16} /> Trade finance · on Polygon · from DIFC
             </div>
           </Reveal>
           <Reveal delay={120}>
@@ -209,7 +209,7 @@ export function Landing({ session }: { session: Session }) {
         </div>
         <footer className="relative mx-auto mt-24 max-w-6xl px-5 text-xs text-mist">
           <div className="flex items-center gap-2">
-            <Sail size={16} className="text-brass" /> dhow — non-custodial. Settlement in USDC on Polygon; AED at the
+            <Logo size={16} className="text-brass" /> dhow — non-custodial. Settlement in USDC on Polygon; AED at the
             edge via licensed partners.
           </div>
         </footer>

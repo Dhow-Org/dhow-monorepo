@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Sail } from "../ui/Sail";
+import { Logo } from "../ui/Logo";
 import { Button } from "../ui/Button";
 import { Spinner } from "../ui/Spinner";
 import { shortAddr } from "../lib/format";
@@ -14,7 +14,7 @@ export function AppShell({ session, children }: { session: Session; children: Re
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <Link to="/" className="flex items-center gap-2.5">
             <span className="text-brass">
-              <Sail size={24} />
+              <Logo size={26} />
             </span>
             <span className="font-display text-xl tracking-tight">dhow</span>
             <span className="hidden text-xs text-mist sm:inline">· trade finance, on Polygon</span>
