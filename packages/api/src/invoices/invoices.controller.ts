@@ -2,8 +2,9 @@ import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { registerInvoiceSchema, type RegisterInvoiceInput } from "@dhow/shared";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
-import { JwtAuthGuard } from "../auth/jwt-auth.guard";
+import { JwtAuthGuard, type AuthUser } from "../auth/jwt-auth.guard";
 import { OpsGuard } from "../auth/ops.guard";
+import { CurrentUser } from "../auth/current-user.decorator";
 import { InvoicesService } from "./invoices.service";
 
 @ApiTags("invoices")
@@ -14,21 +15,21 @@ export class InvoicesController {
   constructor(private readonly invoices: InvoicesService) {}
 
   @Post()
-  @ApiOperation({ summary: "Register a receivable (DB + on-chain)" })
-  create(@Body(new ZodValidationPipe(registerInvoiceSchema)) body: RegisterInvoiceInput) {
-    return this.invoices.create(body);
+  @ApiOperation({ summary: "Register a receivable (DB + on-chain) for the signed-in wallet" })
+  create(@CurrentUser() user: AuthUser, @Body(new ZodValidationPipe(registerInvoiceSchema)) body: RegisterInvoiceInput) {
+    return this.invoices.create(user.address, body);
   }
 
   @Get()
-  @ApiOperation({ summary: "List invoices" })
-  list() {
-    return this.invoices.list();
+  @ApiOperation({ summary: "List the signed-in wallet's own invoices" })
+  list(@CurrentUser() user: AuthUser) {
+    return this.invoices.listForWallet(user.address);
   }
 
   @Get(":id")
-  @ApiOperation({ summary: "Get an invoice by id" })
-  get(@Param("id") id: string) {
-    return this.invoices.get(id);
+  @ApiOperation({ summary: "Get one of the signed-in wallet's invoices" })
+  get(@CurrentUser() user: AuthUser, @Param("id") id: string) {
+    return this.invoices.getForWallet(user.address, id);
   }
 
   @Post(":id/verify")

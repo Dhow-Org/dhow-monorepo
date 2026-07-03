@@ -1,7 +1,9 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAccount, useChainId, useConnect, useDisconnect, useSignMessage } from "wagmi";
 import { getToken, setToken } from "../lib/api";
 import { siweLogin } from "../lib/auth";
+
+const ADDR_KEY = "dhow.jwt.addr";
 
 export interface Session {
   address?: string;
@@ -21,6 +23,25 @@ export function useSession(): Session {
   const [token, setTok] = useState<string | null>(getToken());
   const [busy, setBusy] = useState(false);
 
+  const logout = useCallback(() => {
+    setToken(null);
+    localStorage.removeItem(ADDR_KEY);
+    setTok(null);
+    disconnect();
+  }, [disconnect]);
+
+  // Security: the token belongs to one wallet. If the connected account changes
+  // to a different address, drop the session so the new wallet must sign in.
+  useEffect(() => {
+    if (!token || !address) return;
+    const authedAddr = localStorage.getItem(ADDR_KEY);
+    if (authedAddr && authedAddr !== address.toLowerCase()) {
+      setToken(null);
+      localStorage.removeItem(ADDR_KEY);
+      setTok(null);
+    }
+  }, [address, token]);
+
   const login = useCallback(async () => {
     setBusy(true);
     try {
@@ -37,17 +58,12 @@ export function useSession(): Session {
         chainId,
         signMessage: (message) => signMessageAsync({ message }),
       });
+      localStorage.setItem(ADDR_KEY, addr.toLowerCase());
       setTok(t);
     } finally {
       setBusy(false);
     }
   }, [address, connectors, connectAsync, chainId, signMessageAsync]);
-
-  const logout = useCallback(() => {
-    setToken(null);
-    setTok(null);
-    disconnect();
-  }, [disconnect]);
 
   return { address, isConnected, authed: Boolean(token), busy, login, logout };
 }

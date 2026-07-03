@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable } from "@nestjs/common";
 import { keccak256, toHex, zeroAddress, type Address } from "viem";
 import type { RegisterInvoiceInput } from "@dhow/shared";
 import { PrismaService } from "../prisma/prisma.service";
@@ -11,17 +11,21 @@ export class InvoicesService {
     private readonly chain: ChainService,
   ) {}
 
-  /** Persist the receivable, then register it on-chain (externalRef hashed for anti-double-financing). */
-  async create(input: RegisterInvoiceInput) {
+  /**
+   * Persist the receivable, then register it on-chain. The supplier is always the
+   * signed-in wallet — a user can only create receivables they own.
+   */
+  async create(wallet: string, input: RegisterInvoiceInput) {
+    const supplier = wallet.toLowerCase() as Address;
     const sme = await this.prisma.sme.upsert({
-      where: { wallet: input.supplier.toLowerCase() },
+      where: { wallet: supplier },
       update: {},
-      create: { wallet: input.supplier.toLowerCase() },
+      create: { wallet: supplier },
     });
 
     const externalRefHash = keccak256(toHex(input.externalRef));
     const { txHash, onChainId } = await this.chain.registerInvoice({
-      supplier: input.supplier,
+      supplier,
       debtor: (input.debtor ?? zeroAddress) as Address,
       asset: input.asset,
       amount: BigInt(input.amount),
@@ -58,11 +62,24 @@ export class InvoicesService {
     return this.prisma.invoice.update({ where: { id }, data: { status: "VERIFIED" } });
   }
 
-  list() {
-    return this.prisma.invoice.findMany({ orderBy: { createdAt: "desc" }, include: { advance: true } });
+  /** Only the owning wallet's receivables. */
+  async listForWallet(wallet: string) {
+    const sme = await this.prisma.sme.findUnique({ where: { wallet: wallet.toLowerCase() } });
+    if (!sme) return [];
+    return this.prisma.invoice.findMany({
+      where: { smeId: sme.id },
+      orderBy: { createdAt: "desc" },
+      include: { advance: true },
+    });
   }
 
-  get(id: string) {
-    return this.prisma.invoice.findUniqueOrThrow({ where: { id }, include: { advance: true } });
+  /** A single invoice, only if the caller owns it. */
+  async getForWallet(wallet: string, id: string) {
+    const invoice = await this.prisma.invoice.findUniqueOrThrow({
+      where: { id },
+      include: { advance: true, sme: true },
+    });
+    if (invoice.sme.wallet !== wallet.toLowerCase()) throw new ForbiddenException("not your invoice");
+    return invoice;
   }
 }
