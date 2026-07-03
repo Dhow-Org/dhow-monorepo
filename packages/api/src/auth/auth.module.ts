@@ -10,6 +10,8 @@ import { OpsGuard } from "./ops.guard";
   imports: [JwtModule.register({})],
   controllers: [AuthController],
   providers: [AuthService, JwtAuthGuard, OpsGuard],
-  exports: [JwtAuthGuard, OpsGuard],
+  // Export JwtModule too, so JwtService resolves wherever the guards are
+  // instantiated (guards used via @UseGuards across other modules).
+  exports: [JwtAuthGuard, OpsGuard, JwtModule],
 })
 export class AuthModule {}
