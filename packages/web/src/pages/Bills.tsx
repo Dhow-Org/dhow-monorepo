@@ -11,7 +11,7 @@ import { fmtUsd, fromBaseUnits } from "../lib/format";
 
 export function Bills({ session }: { session: Session }) {
   const config = useConfig();
-  const bills = useBills(session.authed);
+  const bills = useBills(session.authed ? session.address : undefined);
   const { faucet, pay, busy, error } = useBuyerActions(config.data);
   const qc = useQueryClient();
   const [note, setNote] = useState<string | null>(null);

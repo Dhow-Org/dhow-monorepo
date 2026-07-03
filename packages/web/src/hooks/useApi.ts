@@ -12,19 +12,19 @@ export function useConfig() {
   return useQuery({ queryKey: ["config"], queryFn: () => api<ChainConfig>("/config", { auth: false }), staleTime: Infinity });
 }
 
-export function useInvoices(enabled: boolean) {
+export function useInvoices(wallet: string | undefined) {
   return useQuery({
-    queryKey: ["invoices"],
+    queryKey: ["invoices", wallet],
     queryFn: () => api<InvoiceRow[]>("/invoices"),
-    enabled,
+    enabled: Boolean(wallet),
   });
 }
 
-export function useBills(enabled: boolean) {
+export function useBills(wallet: string | undefined) {
   return useQuery({
-    queryKey: ["bills"],
+    queryKey: ["bills", wallet],
     queryFn: () => api<InvoiceRow[]>("/invoices/bills"),
-    enabled,
+    enabled: Boolean(wallet),
   });
 }
 

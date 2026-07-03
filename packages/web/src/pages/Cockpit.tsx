@@ -23,7 +23,7 @@ const USDC = (import.meta.env.VITE_USDC_ADDRESS ?? "0x00000000000000000000000000
 const TIER = ["Bronze", "Silver", "Gold", "Platinum"];
 
 export function Cockpit({ session }: { session: Session }) {
-  const invoices = useInvoices(session.authed);
+  const invoices = useInvoices(session.authed ? session.address : undefined);
   const pool = usePool();
   const reputation = useReputation(session.address);
   const createInvoice = useCreateInvoice();
