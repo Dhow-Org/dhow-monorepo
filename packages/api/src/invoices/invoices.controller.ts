@@ -26,6 +26,13 @@ export class InvoicesController {
     return this.invoices.listForWallet(user.address);
   }
 
+  // NB: must be declared before the ":id" route so "bills" isn't treated as an id.
+  @Get("bills")
+  @ApiOperation({ summary: "Invoices the signed-in wallet OWES (as buyer) and can pay now" })
+  bills(@CurrentUser() user: AuthUser) {
+    return this.invoices.billsForWallet(user.address);
+  }
+
   @Get(":id")
   @ApiOperation({ summary: "Get one of the signed-in wallet's invoices" })
   get(@CurrentUser() user: AuthUser, @Param("id") id: string) {

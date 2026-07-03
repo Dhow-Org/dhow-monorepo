@@ -23,6 +23,9 @@ export function AppShell({ session, children }: { session: Session; children: Re
             <NavLink to="/" active={loc.pathname === "/"}>
               Cockpit
             </NavLink>
+            <NavLink to="/bills" active={loc.pathname === "/bills"}>
+              Bills
+            </NavLink>
             <NavLink to="/pool" active={loc.pathname === "/pool"}>
               Pool
             </NavLink>

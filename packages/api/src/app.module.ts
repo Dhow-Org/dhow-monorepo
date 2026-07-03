@@ -11,6 +11,7 @@ import { ReputationModule } from "./reputation/reputation.module";
 import { IndexerModule } from "./indexer/indexer.module";
 import { OpenFinanceModule } from "./open-finance/open-finance.module";
 import { OffRampModule } from "./off-ramp/off-ramp.module";
+import { MetaModule } from "./meta/meta.module";
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { OffRampModule } from "./off-ramp/off-ramp.module";
     IndexerModule,
     OpenFinanceModule,
     OffRampModule,
+    MetaModule,
   ],
 })
 export class AppModule {}

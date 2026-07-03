@@ -2,10 +2,28 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import type { Decision, DisburseResult, InvoiceRow, PoolStats, ReputationView } from "../lib/types";
 
+export interface ChainConfig {
+  chainId: number;
+  usdc: `0x${string}`;
+  financingPool: `0x${string}`;
+}
+
+export function useConfig() {
+  return useQuery({ queryKey: ["config"], queryFn: () => api<ChainConfig>("/config", { auth: false }), staleTime: Infinity });
+}
+
 export function useInvoices(enabled: boolean) {
   return useQuery({
     queryKey: ["invoices"],
     queryFn: () => api<InvoiceRow[]>("/invoices"),
+    enabled,
+  });
+}
+
+export function useBills(enabled: boolean) {
+  return useQuery({
+    queryKey: ["bills"],
+    queryFn: () => api<InvoiceRow[]>("/invoices/bills"),
     enabled,
   });
 }

@@ -38,7 +38,7 @@ export class InvoicesService {
       data: {
         onChainId,
         smeId: sme.id,
-        debtor: input.debtor ?? null,
+        debtor: input.debtor ? input.debtor.toLowerCase() : null,
         asset: input.asset,
         amount: input.amount,
         dueDate: new Date(input.dueDate * 1000),
@@ -68,6 +68,15 @@ export class InvoicesService {
     if (!sme) return [];
     return this.prisma.invoice.findMany({
       where: { smeId: sme.id },
+      orderBy: { createdAt: "desc" },
+      include: { advance: true },
+    });
+  }
+
+  /** Invoices the wallet OWES as the buyer and that are financed (i.e. payable now). */
+  async billsForWallet(wallet: string) {
+    return this.prisma.invoice.findMany({
+      where: { debtor: wallet.toLowerCase(), status: "FINANCED" },
       orderBy: { createdAt: "desc" },
       include: { advance: true },
     });

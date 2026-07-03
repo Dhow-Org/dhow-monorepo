@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
 import { Cockpit } from "./pages/Cockpit";
+import { Bills } from "./pages/Bills";
 import { Funders } from "./pages/Funders";
 import { Landing } from "./landing/Landing";
 import { useSession } from "./hooks/useSession";
@@ -17,6 +18,7 @@ export function App() {
     <AppShell session={session}>
       <Routes>
         <Route path="/" element={<Cockpit session={session} />} />
+        <Route path="/bills" element={<Bills session={session} />} />
         <Route path="/pool" element={<Funders />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
