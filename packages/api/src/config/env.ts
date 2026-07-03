@@ -4,7 +4,11 @@ const hexAddress = z.string().regex(/^0x[a-fA-F0-9]{40}$/, "must be a 0x EVM add
 
 export const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  // Railway (and most hosts) inject PORT; fall back to API_PORT, then 4000.
+  PORT: z.coerce.number().int().positive().optional(),
   API_PORT: z.coerce.number().int().positive().default(4000),
+  // Comma-separated allowed browser origins for CORS (e.g. the Vercel URL). "*" allows all.
+  CORS_ORIGINS: z.string().default("*"),
   DATABASE_URL: z.string().min(1),
   CHAIN_ID: z.coerce.number().int().positive(),
   RPC_URL: z.string().url(),

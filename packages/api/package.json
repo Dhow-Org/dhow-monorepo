@@ -8,9 +8,11 @@
     "build": "prisma generate && tsc -p tsconfig.build.json",
     "lint": "tsc --noEmit -p tsconfig.json",
     "start": "node dist/main.js",
+    "start:prod": "prisma db push --skip-generate && node dist/main.js",
     "start:dev": "tsx watch src/main.ts",
     "prisma:generate": "prisma generate",
     "prisma:validate": "prisma validate",
+    "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "test": "tsx test/cashflow.test.ts && tsx test/offramp.test.ts"
