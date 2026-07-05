@@ -51,7 +51,7 @@
       <path d="M24 18 L17 31 L24 31 Z" fill="#D7A23B" stroke="none" opacity="0.5"/>
       <path d="M15 32.5 Q24 36.5 33 32.5" stroke-width="1.6" stroke-linecap="round"/>
     </g>
-    <text x="112" y="74" font-family="Fraunces,serif" font-weight="600" font-size="94" fill="#F2ECDD" letter-spacing="-2">dhow</text>
+    <text x="112" y="74" font-family="Fraunces,serif" font-weight="600" font-size="94" fill="#F2ECDD" letter-spacing="-2">Dhow</text>
   </g>
 
   <text x="122" y="300" font-family="Fraunces,serif" font-weight="600" font-size="36" fill="#D7A23B">Your invoice is a voyage.</text>
