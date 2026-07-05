@@ -61,12 +61,16 @@
 
   @media print{
     @page{size:1280px 720px;margin:0}
+    /* force backgrounds to print even if the browser's "Background graphics" box is off */
+    *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
     html,body{background:var(--ink)}
-    #stage{position:static;display:block;overflow:visible;background:var(--ink)}
+    #stage{position:static;display:block;overflow:visible;background:none}
     #deck{width:1280px;height:auto;transform:none!important}
-    .slide{position:relative;opacity:1!important;page-break-after:always;break-after:page;
+    .slide{position:relative;opacity:1!important;height:720px;overflow:hidden;
+       page-break-after:always;break-after:page;page-break-inside:avoid;
        background:radial-gradient(1100px 620px at 82% -12%, rgba(215,162,59,.10), transparent 60%),
        radial-gradient(820px 520px at -8% 112%, rgba(86,214,182,.08), transparent 55%), var(--ink)}
+    .slide:last-child{page-break-after:auto;break-after:auto}
     #hud,#bar,#hint{display:none}
   }
 </style>
