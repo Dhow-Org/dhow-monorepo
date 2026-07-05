@@ -2,6 +2,7 @@ import { type FormEvent, useState } from "react";
 import { keccak256, toHex } from "viem";
 import {
   useAssess,
+  useConfig,
   useCreateInvoice,
   useDisburse,
   useInvoices,
@@ -17,6 +18,7 @@ import { Spinner } from "../ui/Spinner";
 import { Stat } from "../ui/Stat";
 import { VoyageLine } from "../components/VoyageLine";
 import { VerdictCard } from "../components/VerdictCard";
+import { InvoiceDetail } from "../components/InvoiceDetail";
 import { fmtUsd, fromBaseUnits } from "../lib/format";
 
 const USDC = (import.meta.env.VITE_USDC_ADDRESS ?? "0x0000000000000000000000000000000000000000") as `0x${string}`;
@@ -26,12 +28,14 @@ export function Cockpit({ session }: { session: Session }) {
   const invoices = useInvoices(session.authed ? session.address : undefined);
   const pool = usePool();
   const reputation = useReputation(session.address);
+  const config = useConfig();
   const createInvoice = useCreateInvoice();
   const verify = useVerifyInvoice();
   const assess = useAssess();
   const disburse = useDisburse();
 
   const [showForm, setShowForm] = useState(false);
+  const [selected, setSelected] = useState<InvoiceRow | null>(null);
   const [verdict, setVerdict] = useState<{ id: string; decision: Decision } | null>(null);
   const [amount, setAmount] = useState("");
   const [debtor, setDebtor] = useState("");
@@ -141,6 +145,7 @@ export function Cockpit({ session }: { session: Session }) {
               key={inv.id}
               inv={inv}
               busy={verify.isPending || assess.isPending || disburse.isPending}
+              onOpen={() => setSelected(inv)}
               onVerify={() => verify.mutate(inv.id)}
               onAssess={async () => setVerdict({ id: inv.id, decision: await assess.mutateAsync({ invoiceId: inv.id }) })}
               onFinance={() => disburse.mutate({ invoiceId: inv.id })}
@@ -153,6 +158,10 @@ export function Cockpit({ session }: { session: Session }) {
           No receivables yet. Register your first invoice to get a financing quote.
         </div>
       )}
+
+      {selected ? (
+        <InvoiceDetail invoice={selected} chainId={config.data?.chainId} onClose={() => setSelected(null)} />
+      ) : null}
     </div>
   );
 }
@@ -160,6 +169,7 @@ export function Cockpit({ session }: { session: Session }) {
 function InvoiceCard({
   inv,
   busy,
+  onOpen,
   onVerify,
   onAssess,
   onFinance,
@@ -167,6 +177,7 @@ function InvoiceCard({
 }: {
   inv: InvoiceRow;
   busy: boolean;
+  onOpen: () => void;
   onVerify: () => void;
   onAssess: () => void;
   onFinance: () => void;
@@ -174,7 +185,13 @@ function InvoiceCard({
 }) {
   const amount = fromBaseUnits(inv.amount);
   return (
-    <div className="panel p-6">
+    <div
+      className="panel cursor-pointer p-6 transition-colors hover:border-brass/30"
+      onClick={onOpen}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onOpen()}
+    >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
@@ -186,7 +203,7 @@ function InvoiceCard({
             {inv.debtor ? ` · buyer ${inv.debtor.slice(0, 6)}…` : ""}
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
           {inv.status === "REGISTERED" ? (
             <Button variant="outline" onClick={onVerify} disabled={busy}>
               Verify
@@ -215,7 +232,7 @@ function InvoiceCard({
       </div>
 
       {verdict ? (
-        <div className="mt-5">
+        <div className="mt-5" onClick={(e) => e.stopPropagation()}>
           <VerdictCard decision={verdict} invoiceAmount={amount} />
         </div>
       ) : null}

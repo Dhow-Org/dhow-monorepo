@@ -12,3 +12,12 @@ export const fromBaseUnits = (base: string): number => Number(BigInt(base)) / 1e
 
 export const daysUntil = (iso: string): number =>
   Math.max(0, Math.round((new Date(iso).getTime() - Date.now()) / 86_400_000));
+
+export const fmtDate = (iso: string): string =>
+  new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+
+const explorerBase = (chainId = 80002): string =>
+  chainId === 80002 ? "https://amoy.polygonscan.com" : "https://polygonscan.com";
+
+export const explorerTx = (hash: string, chainId?: number): string => `${explorerBase(chainId)}/tx/${hash}`;
+export const explorerAddr = (addr: string, chainId?: number): string => `${explorerBase(chainId)}/address/${addr}`;

@@ -11,6 +11,7 @@ export interface InvoiceRow {
   status: "REGISTERED" | "VERIFIED" | "FINANCED" | "REPAID" | "DEFAULTED" | "CANCELLED";
   externalRef: string;
   createdAt: string;
+  registerTx?: string | null;
   advance?: AdvanceRow | null;
 }
 
@@ -22,6 +23,8 @@ export interface AdvanceRow {
   repaid: string;
   status: "ACTIVE" | "REPAID" | "DEFAULTED";
   dueDate: string;
+  disburseTx?: string | null;
+  disbursedAt?: string | null;
 }
 
 export interface PoolStats {
