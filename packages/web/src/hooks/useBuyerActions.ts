@@ -1,8 +1,24 @@
 import { useCallback, useState } from "react";
 import { useAccount, usePublicClient, useWriteContract } from "wagmi";
-import type { Address } from "viem";
+import type { Address, PublicClient } from "viem";
 import { erc20Abi, financingPoolAbi } from "../lib/contracts";
 import type { ChainConfig } from "./useApi";
+
+// Polygon Amoy enforces a minimum priority fee (~25 gwei); wallets often default
+// to ~1.5 gwei and the RPC rejects the tx ("gas price below minimum"). We set an
+// explicit floor so buyer-funded transactions always clear.
+const MIN_PRIORITY_FEE = 30_000_000_000n; // 30 gwei
+
+async function feeOverrides(publicClient: PublicClient): Promise<{ maxFeePerGas: bigint; maxPriorityFeePerGas: bigint }> {
+  let base = 0n;
+  try {
+    base = await publicClient.getGasPrice();
+  } catch {
+    base = MIN_PRIORITY_FEE;
+  }
+  const maxPriorityFeePerGas = base > MIN_PRIORITY_FEE ? base : MIN_PRIORITY_FEE;
+  return { maxPriorityFeePerGas, maxFeePerGas: base + maxPriorityFeePerGas };
+}
 
 /** Client-side (buyer-funded) chain actions: faucet + pay an outstanding advance. */
 export function useBuyerActions(config: ChainConfig | undefined) {
@@ -19,11 +35,13 @@ export function useBuyerActions(config: ChainConfig | undefined) {
       setBusy("faucet");
       setError(null);
       try {
+        const fees = await feeOverrides(publicClient);
         const hash = await writeContractAsync({
           address: config.usdc,
           abi: erc20Abi,
           functionName: "mint",
           args: [to, BigInt(human) * 1_000_000n],
+          ...fees,
         });
         await publicClient.waitForTransactionReceipt({ hash });
       } catch (e) {
@@ -54,6 +72,7 @@ export function useBuyerActions(config: ChainConfig | undefined) {
             abi: erc20Abi,
             functionName: "approve",
             args: [config.financingPool, totalDue],
+            ...(await feeOverrides(publicClient)),
           });
           await publicClient.waitForTransactionReceipt({ hash: approveHash });
         }
@@ -62,6 +81,7 @@ export function useBuyerActions(config: ChainConfig | undefined) {
           abi: financingPoolAbi,
           functionName: "repay",
           args: [BigInt(advanceOnChainId), totalDue],
+          ...(await feeOverrides(publicClient)),
         });
         await publicClient.waitForTransactionReceipt({ hash: repayHash });
         return true;
