@@ -34,10 +34,10 @@ export function VerdictCard({ decision, invoiceAmount }: { decision: Decision; i
 
       {!declined ? (
         <div className="mt-6 rounded-xl border border-hair bg-abyss/40 p-4">
-          <div className="eyebrow">Bank vs dhow on this invoice</div>
+          <div className="eyebrow">Bank vs Dhow on this invoice</div>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             <CompareRow who="A bank" cost={fmtUsd(bankCost)} when={`~${BANK_DAYS} days`} muted />
-            <CompareRow who="dhow" cost={fmtUsd(dhowCost)} when="~8 seconds" />
+            <CompareRow who="Dhow" cost={fmtUsd(dhowCost)} when="~8 seconds" />
           </div>
           {saved > 0 ? (
             <div className="mt-3 text-sm text-foam">

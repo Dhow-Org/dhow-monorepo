@@ -22,7 +22,7 @@ export function LandingNav({ session }: { session: Session }) {
           <span className="text-brass">
             <Logo size={26} />
           </span>
-          <span className="font-display text-xl tracking-tight">dhow</span>
+          <span className="font-display text-xl tracking-tight">Dhow</span>
         </div>
         <button
           onClick={() => void session.login()}

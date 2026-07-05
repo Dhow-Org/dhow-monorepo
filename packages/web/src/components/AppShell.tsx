@@ -16,7 +16,7 @@ export function AppShell({ session, children }: { session: Session; children: Re
             <span className="text-brass">
               <Logo size={26} />
             </span>
-            <span className="font-display text-xl tracking-tight">dhow</span>
+            <span className="font-display text-xl tracking-tight">Dhow</span>
             <span className="hidden text-xs text-mist sm:inline">· trade finance, on Polygon</span>
           </Link>
           <nav className="flex items-center gap-1">
@@ -45,7 +45,7 @@ export function AppShell({ session, children }: { session: Session; children: Re
       </header>
       <main className="mx-auto max-w-6xl px-5 py-10">{children}</main>
       <footer className="mx-auto max-w-6xl px-5 py-10 text-xs text-mist">
-        dhow — non-custodial. Settlement in USDC on Polygon; AED at the edge via licensed partners.
+        Dhow — non-custodial. Settlement in USDC on Polygon; AED at the edge via licensed partners.
       </footer>
     </div>
   );

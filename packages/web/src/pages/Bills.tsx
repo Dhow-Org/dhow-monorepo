@@ -36,7 +36,7 @@ export function Bills({ session }: { session: Session }) {
         <div className="eyebrow">Buyer view</div>
         <h1 className="mt-2 font-display text-4xl">Bills to pay</h1>
         <p className="mt-3 max-w-lg text-mist">
-          Invoices you owe that a supplier financed through dhow. Paying settles the advance directly from your wallet —
+          Invoices you owe that a supplier financed through Dhow. Paying settles the advance directly from your wallet —
           this is the repayment that clears the loan and lifts the supplier's credit score.
         </p>
       </div>

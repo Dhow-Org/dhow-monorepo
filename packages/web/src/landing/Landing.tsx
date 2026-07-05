@@ -209,7 +209,7 @@ export function Landing({ session }: { session: Session }) {
         </div>
         <footer className="relative mx-auto mt-24 max-w-6xl px-5 text-xs text-mist">
           <div className="flex items-center gap-2">
-            <Logo size={16} className="text-brass" /> dhow — non-custodial. Settlement in USDC on Polygon; AED at the
+            <Logo size={16} className="text-brass" /> Dhow — non-custodial. Settlement in USDC on Polygon; AED at the
             edge via licensed partners.
           </div>
         </footer>

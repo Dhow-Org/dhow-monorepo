@@ -34,7 +34,7 @@ export async function siweLogin(opts: {
   const message = buildSiweMessage({
     domain: window.location.host,
     address: opts.address,
-    statement: "Sign in to dhow.",
+    statement: "Sign in to Dhow.",
     uri: window.location.origin,
     chainId: opts.chainId,
     nonce,

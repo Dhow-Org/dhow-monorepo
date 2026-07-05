@@ -73,7 +73,7 @@ export function ActVoyage() {
             </div>
           </div>
           <div className="panel border-foam/20 p-5">
-            <div className="eyebrow">dhow</div>
+            <div className="eyebrow">Dhow</div>
             <div className="mt-2 flex items-baseline gap-3">
               <Counter value={0.3} suffix="%" decimals={1} className="font-mono text-3xl text-foam" />
               <span className="text-sm text-mist">fee · ~8 seconds</span>

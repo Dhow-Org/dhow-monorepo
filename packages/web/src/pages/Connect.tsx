@@ -25,7 +25,7 @@ export function Connect({ session }: { session: Session }) {
         <div className="mt-10 flex flex-wrap gap-8">
           <Mini label="SME bank-finance rejections" value="40%" />
           <Mini label="Bank cost · wait" value="3–5% · ~3d" />
-          <Mini label="dhow" value="<1% · ~8s" accent />
+          <Mini label="Dhow" value="<1% · ~8s" accent />
         </div>
       </div>
 
