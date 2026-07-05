@@ -1,11 +1,18 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { z } from "zod";
 import { registerInvoiceSchema, type RegisterInvoiceInput } from "@dhow/shared";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import { JwtAuthGuard, type AuthUser } from "../auth/jwt-auth.guard";
 import { OpsGuard } from "../auth/ops.guard";
 import { CurrentUser } from "../auth/current-user.decorator";
 import { InvoicesService } from "./invoices.service";
+
+const reportRepaymentSchema = z.object({
+  advanceOnChainId: z.number().int().positive(),
+  txHash: z.string().regex(/^0x[0-9a-fA-F]{64}$/),
+});
+type ReportRepaymentBody = z.infer<typeof reportRepaymentSchema>;
 
 @ApiTags("invoices")
 @ApiBearerAuth()
@@ -31,6 +38,15 @@ export class InvoicesController {
   @ApiOperation({ summary: "Invoices the signed-in wallet OWES (as buyer) and can pay now" })
   bills(@CurrentUser() user: AuthUser) {
     return this.invoices.billsForWallet(user.address);
+  }
+
+  @Post("report-repayment")
+  @ApiOperation({ summary: "Buyer records an on-chain repayment tx it just submitted" })
+  reportRepayment(
+    @CurrentUser() user: AuthUser,
+    @Body(new ZodValidationPipe(reportRepaymentSchema)) body: ReportRepaymentBody,
+  ) {
+    return this.invoices.reportRepayment(user.address, body.advanceOnChainId, body.txHash);
   }
 
   @Get(":id")

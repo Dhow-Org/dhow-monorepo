@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { Address } from "viem";
-import { useBills, useConfig } from "../hooks/useApi";
+import { useBills, useConfig, useReportRepayment } from "../hooks/useApi";
 import { useBuyerActions } from "../hooks/useBuyerActions";
 import type { Session } from "../hooks/useSession";
 import type { InvoiceRow } from "../lib/types";
@@ -13,16 +13,20 @@ export function Bills({ session }: { session: Session }) {
   const config = useConfig();
   const bills = useBills(session.authed ? session.address : undefined);
   const { faucet, pay, busy, error } = useBuyerActions(config.data);
+  const reportRepayment = useReportRepayment();
   const qc = useQueryClient();
   const [note, setNote] = useState<string | null>(null);
 
   const onPay = async (inv: InvoiceRow) => {
     if (!inv.advance?.onChainId) return;
     const total = BigInt(inv.advance.principal) + BigInt(inv.advance.feeAmount);
-    const ok = await pay(inv.advance.onChainId, total);
-    if (ok) {
+    const advanceOnChainId = inv.advance.onChainId;
+    const txHash = await pay(advanceOnChainId, total);
+    if (txHash) {
+      // record the repayment tx so the supplier sees it on the invoice's on-chain proof
+      await reportRepayment.mutateAsync({ advanceOnChainId, txHash }).catch(() => undefined);
       setNote("Paid. The advance is cleared and the supplier's on-chain score will rise.");
-      setTimeout(() => qc.invalidateQueries({ queryKey: ["bills"] }), 1500);
+      qc.invalidateQueries({ queryKey: ["bills"] });
     }
   };
 

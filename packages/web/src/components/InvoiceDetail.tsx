@@ -92,6 +92,7 @@ export function InvoiceDetail({ invoice, chainId, onClose }: { invoice: InvoiceR
           <div className="mt-3 flex flex-col gap-2">
             {invoice.registerTx ? <TxLink label="Registration" hash={invoice.registerTx} chainId={chainId} /> : null}
             {adv?.disburseTx ? <TxLink label="Disbursement" hash={adv.disburseTx} chainId={chainId} /> : null}
+            {adv?.repayTx ? <TxLink label="Repayment" hash={adv.repayTx} chainId={chainId} /> : null}
             {!invoice.registerTx && !adv?.disburseTx ? (
               <div className="text-sm text-mist">No on-chain transactions yet.</div>
             ) : null}

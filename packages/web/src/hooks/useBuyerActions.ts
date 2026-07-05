@@ -84,10 +84,10 @@ export function useBuyerActions(config: ChainConfig | undefined) {
           ...(await feeOverrides(publicClient)),
         });
         await publicClient.waitForTransactionReceipt({ hash: repayHash });
-        return true;
+        return repayHash as string;
       } catch (e) {
         setError((e as Error).message.split("\n")[0]);
-        return false;
+        return null;
       } finally {
         setBusy(null);
       }

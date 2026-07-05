@@ -25,6 +25,7 @@ export interface AdvanceRow {
   dueDate: string;
   disburseTx?: string | null;
   disbursedAt?: string | null;
+  repayTx?: string | null;
 }
 
 export interface PoolStats {

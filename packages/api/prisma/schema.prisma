@@ -89,6 +89,7 @@ model Advance {
   status      AdvanceStatus @default(ACTIVE)
   disburseTx  String?
   disbursedAt DateTime?
+  repayTx     String?
   repayments  Repayment[]
   decision    UnderwritingDecision?
   createdAt   DateTime      @default(now())

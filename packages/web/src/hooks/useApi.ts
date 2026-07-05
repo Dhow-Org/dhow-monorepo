@@ -32,6 +32,13 @@ export function usePool() {
   return useQuery({ queryKey: ["pool"], queryFn: () => api<PoolStats>("/pool") });
 }
 
+export function useReportRepayment() {
+  return useMutation({
+    mutationFn: (vars: { advanceOnChainId: number; txHash: string }) =>
+      api<{ recorded: boolean; repaid: boolean }>("/invoices/report-repayment", { method: "POST", body: vars }),
+  });
+}
+
 export function useReputation(wallet: string | undefined) {
   return useQuery({
     queryKey: ["reputation", wallet],

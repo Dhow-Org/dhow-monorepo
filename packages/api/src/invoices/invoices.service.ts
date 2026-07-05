@@ -82,6 +82,29 @@ export class InvoicesService {
     });
   }
 
+  /**
+   * The buyer paid an advance directly on-chain (from the Bills page); record the
+   * repayment tx hash and reconcile status from chain. Only the invoice's debtor may report.
+   */
+  async reportRepayment(wallet: string, advanceOnChainId: number, txHash: string) {
+    const advance = await this.prisma.advance.findFirstOrThrow({
+      where: { onChainId: advanceOnChainId },
+      include: { invoice: true },
+    });
+    if (advance.invoice.debtor !== wallet.toLowerCase()) throw new ForbiddenException("not your bill");
+
+    const onChain = await this.chain.getAdvanceOnChain(advanceOnChainId);
+    const repaid = onChain.status === 2; // 0 None, 1 Active, 2 Repaid, 3 Defaulted
+    await this.prisma.advance.update({
+      where: { id: advance.id },
+      data: { repayTx: txHash, repaid: onChain.repaid, status: repaid ? "REPAID" : advance.status },
+    });
+    if (repaid) {
+      await this.prisma.invoice.update({ where: { id: advance.invoiceId }, data: { status: "REPAID" } });
+    }
+    return { recorded: true, repaid };
+  }
+
   /** A single invoice, only if the caller owns it. */
   async getForWallet(wallet: string, id: string) {
     const invoice = await this.prisma.invoice.findUniqueOrThrow({
