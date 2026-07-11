@@ -47,3 +47,4 @@ BUILD-PLAN.md
 
 # Railway env (contains the operator key) - never commit
 railway.env.json
+deck/PITCH-SCRIPT.md
