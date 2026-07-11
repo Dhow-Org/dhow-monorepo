@@ -44,3 +44,6 @@ BUILD-PLAN.md
 
 # code-review tooling artifacts
 .code-review-graph/
+
+# Railway env (contains the operator key) - never commit
+railway.env.json
