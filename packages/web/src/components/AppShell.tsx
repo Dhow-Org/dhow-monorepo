@@ -1,5 +1,7 @@
 import { type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useChainId, useSwitchChain } from "wagmi";
+import { polygonAmoy } from "wagmi/chains";
 import { Logo } from "../ui/Logo";
 import { Button } from "../ui/Button";
 import { Spinner } from "../ui/Spinner";
@@ -43,6 +45,7 @@ export function AppShell({ session, children }: { session: Session; children: Re
           </nav>
         </div>
       </header>
+      <WrongNetwork />
       <main className="mx-auto max-w-6xl px-5 py-10">{children}</main>
       <footer className="mx-auto max-w-6xl px-5 py-10 text-xs text-mist">
         Dhow — non-custodial. Settlement in USDC on Polygon; AED at the edge via licensed partners.
@@ -59,5 +62,27 @@ function NavLink({ to, active, children }: { to: string; active: boolean; childr
     >
       {children}
     </Link>
+  );
+}
+
+/** Warn (and offer a one-click fix) if the wallet is on the wrong chain. */
+function WrongNetwork() {
+  const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
+  if (chainId === polygonAmoy.id) return null;
+  return (
+    <div className="border-b border-teak/40 bg-teak/15">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-3">
+        <span className="text-sm text-canvas">
+          Your wallet is on the wrong network. Dhow runs on <b>Polygon Amoy</b>. Transactions will fail until you switch.
+        </span>
+        <button
+          onClick={() => switchChain({ chainId: polygonAmoy.id })}
+          className="rounded-lg bg-brass px-3.5 py-1.5 text-sm font-semibold text-abyss hover:bg-brassDeep"
+        >
+          Switch to Polygon Amoy
+        </button>
+      </div>
+    </div>
   );
 }

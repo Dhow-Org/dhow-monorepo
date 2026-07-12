@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
-import { useAccount, usePublicClient, useWriteContract } from "wagmi";
+import { useAccount, useChainId, usePublicClient, useSwitchChain, useWriteContract } from "wagmi";
 import type { Address, PublicClient } from "viem";
+import { polygonAmoy } from "wagmi/chains";
 import { erc20Abi, financingPoolAbi } from "../lib/contracts";
 import type { ChainConfig } from "./useApi";
 
@@ -25,8 +26,20 @@ export function useBuyerActions(config: ChainConfig | undefined) {
   const { writeContractAsync } = useWriteContract();
   const publicClient = usePublicClient();
   const { address } = useAccount();
+  const activeChainId = useChainId();
+  const { switchChainAsync } = useSwitchChain();
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  /**
+   * The wallet sends from whatever network it currently has selected. If that is
+   * not our chain, the call hits a chain with no contracts and reverts. Force the
+   * wallet onto the right network first.
+   */
+  const ensureChain = useCallback(async () => {
+    if (activeChainId === polygonAmoy.id) return;
+    await switchChainAsync({ chainId: polygonAmoy.id });
+  }, [activeChainId, switchChainAsync]);
 
   /** Mint test USDC to `to` (testnet TestERC20 faucet). */
   const faucet = useCallback(
@@ -35,8 +48,10 @@ export function useBuyerActions(config: ChainConfig | undefined) {
       setBusy("faucet");
       setError(null);
       try {
+        await ensureChain();
         const fees = await feeOverrides(publicClient);
         const hash = await writeContractAsync({
+          chainId: polygonAmoy.id,
           address: config.usdc,
           abi: erc20Abi,
           functionName: "mint",
@@ -50,7 +65,7 @@ export function useBuyerActions(config: ChainConfig | undefined) {
         setBusy(null);
       }
     },
-    [config, publicClient, writeContractAsync],
+    [config, publicClient, writeContractAsync, ensureChain],
   );
 
   /** Approve then repay an advance from the connected (buyer) wallet. */
@@ -60,6 +75,7 @@ export function useBuyerActions(config: ChainConfig | undefined) {
       setBusy(`pay-${advanceOnChainId}`);
       setError(null);
       try {
+        await ensureChain();
         const allowance = (await publicClient.readContract({
           address: config.usdc,
           abi: erc20Abi,
@@ -68,6 +84,7 @@ export function useBuyerActions(config: ChainConfig | undefined) {
         })) as bigint;
         if (allowance < totalDue) {
           const approveHash = await writeContractAsync({
+            chainId: polygonAmoy.id,
             address: config.usdc,
             abi: erc20Abi,
             functionName: "approve",
@@ -77,6 +94,7 @@ export function useBuyerActions(config: ChainConfig | undefined) {
           await publicClient.waitForTransactionReceipt({ hash: approveHash });
         }
         const repayHash = await writeContractAsync({
+          chainId: polygonAmoy.id,
           address: config.financingPool,
           abi: financingPoolAbi,
           functionName: "repay",
@@ -92,7 +110,7 @@ export function useBuyerActions(config: ChainConfig | undefined) {
         setBusy(null);
       }
     },
-    [config, publicClient, writeContractAsync],
+    [config, publicClient, writeContractAsync, ensureChain],
   );
 
   return { faucet, pay, busy, error };
